@@ -120,27 +120,39 @@ BOOL CTestEncodingDlg::OnInitDialog()
 	CoInitialize(NULL);
 	m_pTaskbarList.CoCreateInstance(CLSID_TaskbarList);
 
-	//SeedProvider를 이용하여 간단히 encrypt
-	CString src = _T("동해물과 백두산이 abcde!@#$%");
+#if 0
+	//SeedProvider, base64_encode를 이용한 파라미터 encrypt 예제
+	CString str = _T("AP2P RC sl.linkmemine.com 7001 047C163E60A1945218687741 user1 TRUE 1 1 0 0 0 일반사용자1 b1064f61cec38b957c3aaa4cac4e588b324d0011 1 sl.linkmemine.com 7002 sl.linkmemine.com 8443 듀얼모니터&nbsp;테스트 1 0 sl.linkmemine.com 443");
+	std::string src = "AP2P RC sl.linkmemine.com 7001 047C163E60A1945218687741 user1 TRUE 1 1 0 0 0 일반사용자1 b1064f61cec38b957c3aaa4cac4e588b324d0011 1 sl.linkmemine.com 7002 sl.linkmemine.com 8443 듀얼모니터&nbsp;테스트 1 0 sl.linkmemine.com 443";
 	SeedProvider sp;
-	sp.SetHeader("Koino1807!");
-	sp.SetKey("LinkMeMine");
+	std::string encoded, decoded;
 
-	sp.Encrypt(src, true);
-	sp.Encrypt(src, true);
-	sp.Encrypt(src, true);
-	sp.Encrypt(src, false);
-	sp.Encrypt(src, false);
-	sp.Encrypt(src, false);
+	sp.SetHeader("Koino1807!123456\0");
+	sp.SetKey("LinkMeMine123456\0");
+
+	sp.Encrypt((char*)(src.c_str()), src.size(), true);
+	TRACE(_T("src     = %s\n"), CString(src.c_str()));
+	encoded = base64_encode(src);
+	TRACE(_T("encoded = %s\n"), CString(encoded.c_str()));
+
+	decoded = base64_decode(encoded);
+	TRACE(_T("decoded = %s\n"), CString(decoded.c_str()));
+	src = decoded;
+	sp.Encrypt((char*)(src.c_str()), src.size(), false);
+	TRACE(_T("src     = %s\n"), CString(src.c_str()));
 
 	//base64
-	std::string encoded = base64_encode("동해물과 백두산이 abcde!@#$%");
-	for (int i = 0; i < 1; i++)
-		encoded = base64_encode(encoded);
+	//str = _T("동해물과 백두산이 abcde!@#$%");
+	sp.Encrypt(str, true);
+	str = base64_encode(str);
+	//for (int i = 0; i < 1; i++)
+	//	str = base64_encode(str);
 
-	std::string decoded = base64_decode(encoded);;
-	for (int i = 0; i < 1; i++) 
-		decoded = base64_decode(decoded);
+	str = base64_decode(str);;
+	//for (int i = 0; i < 1; i++) 
+	//	str = base64_decode(str);
+	sp.Encrypt(str, false);
+#endif
 	
 
 	/*
