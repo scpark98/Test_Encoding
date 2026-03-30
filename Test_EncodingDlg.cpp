@@ -15,8 +15,8 @@
 
 #include <ShObjIdl_core.h>
 
-#include "../../Common/Functions.h"
-#include "../../Common/SeedProvider.h"
+#include "Common/Functions.h"
+#include "Common/SeedProvider.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -119,6 +119,11 @@ BOOL CTestEncodingDlg::OnInitDialog()
 
 	CoInitialize(NULL);
 	m_pTaskbarList.CoCreateInstance(CLSID_TaskbarList);
+
+	CString plain = _T("on;https://dev-admin.linkmemine.com;443;apple;AAaa1234!!");
+	CString encoded = base64_encode_url(plain);
+	CString decoded = base64_decode_url(encoded);
+
 
 #if 0
 	//SeedProvider, base64_encode를 이용한 파라미터 encrypt 예제
